@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tudorc.foundyou">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAFzgry2wSnTAcU4ynlpkn5sGxbHv4vUCo" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="51d719176024059d965b2dfb6e31b97e1d62d7b6" />
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/MainTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SignInActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <service
+                android:name=".MyFirebaseMessagingService"
+                android:exported="false">
+                <intent-filter>
+                    <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                </intent-filter>
+            </service>
+            <service
+                android:name=".MyFirebaseInstanceIdService"
+                android:exported="false">
+                <intent-filter>
+                    <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+                </intent-filter>
+            </service>
+        </activity>
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tudorc.foundyou.MainActivity" />
+        </activity>
+        <activity
+            android:name=".EmailPasswordActivity"
+            android:label="@string/label_emailpassword"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name=".ChatActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="friendlychat.firebase.google.com"
+                    android:pathPrefix="/message"
+                    android:scheme="http" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CreateTribeActivity"
+            android:label="Create a Tribe"
+            android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".JoinTribeActivity"
+            android:label="Join a Tribe"
+            android:windowSoftInputMode="stateVisible" />
+        <activity
+            android:name=".InviteActivity"
+            android:label="Invite members!" />
+
+        <service
+            android:name=".DetectedActivitiesIntentService"
+            android:exported="false" />
+
+        <activity
+            android:name=".PlacesActivity"
+            android:label="Tribe&apos;s Places"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/PlacesTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tudorc.foundyou.MainActivity" />
+        </activity>
+        <activity
+            android:name=".AddPlaceActivity"
+            android:label="Add a Place"
+            android:parentActivityName=".PlacesActivity"
+            android:theme="@style/AddPlaceTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tudorc.foundyou.PlacesActivity" />
+        </activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "117284699541",
+    "firebase_url": "https://fir-found-you.firebaseio.com",
+    "project_id": "firebase-found-you",
+    "storage_bucket": "firebase-found-you.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:117284699541:android:e763799174d3d12d",
+        "android_client_info": {
+          "package_name": "com.tudorc.foundyou"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "117284699541-1uk2tt7vf4eten4tao2lrbo30vq9je57.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "117284699541-2qltj8d129hgcok0mr0ppjtrgmba9fpb.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "117284699541-d3n0qmcrtd9bh941o09ru18ljf2fggj4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tudorc.foundyou",
+            "certificate_hash": "4c7217be19cab1cb021614c5d55b9eda0034a0cf"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnRBFsyAXOld5HxBSA4wrRPGlLuGNWoBs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117284699541-1uk2tt7vf4eten4tao2lrbo30vq9je57.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
