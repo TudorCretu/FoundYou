@@ -23,6 +23,9 @@ public class ChatMessage {
     private String photoUrl;
     private String imageUrl;
 
+    public ChatMessage() {
+    }
+
     public ChatMessage(String text, String name, String photoUrl, String imageUrl) {
         this.text = text;
         this.name = name;

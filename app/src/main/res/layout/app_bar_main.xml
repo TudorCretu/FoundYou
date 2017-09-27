@@ -16,12 +16,13 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:actionOverflowButtonStyle="@style/PlacesActionButtonOverflow"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/map_main" />
-    <include layout="@layout/location_updates" />
+    <!--<include layout="@layout/location_updates" />-->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

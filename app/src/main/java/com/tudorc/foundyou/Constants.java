@@ -20,9 +20,10 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.google.android.gms.location.DetectedActivity;
-import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Constants used in this sample.
@@ -67,6 +68,27 @@ final class Constants {
             DetectedActivity.IN_VEHICLE,
             DetectedActivity.UNKNOWN
     };
+
+    static final Map<String, Integer> PLACES_ICONS;
+    static {
+        Map<String, Integer> aMap = new HashMap<String, Integer>();
+        aMap =  new HashMap<String, Integer>();
+        aMap.put("Home",R.drawable.home);
+        aMap.put("Work",R.drawable.briefcase);
+        aMap.put("Park",R.drawable.oak_tree);
+        aMap.put("School",R.drawable.graduation_cap);
+        aMap.put("Cafe",R.drawable.cafe);
+        aMap.put("Club",R.drawable.cocktail);
+        aMap.put("Restaurant",R.drawable.restaurant);
+        aMap.put("Pub",R.drawable.beer);
+        aMap.put("Gym",R.drawable.dumbbell);
+        aMap.put("Gas Station",R.drawable.gas_station);
+        aMap.put("Transport Station",R.drawable.bus);
+        aMap.put("Grocery Store",R.drawable.shopping_cart);
+        aMap.put("Default",R.drawable.marker);
+        aMap.put("Lover",R.drawable.heart);
+        PLACES_ICONS = Collections.unmodifiableMap(aMap);
+    }
 
     /**
      * Returns a human readable String corresponding to a detected activity type.

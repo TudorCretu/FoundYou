@@ -44,6 +44,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -124,7 +125,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap;
-import static com.tudorc.foundyou.PlacesActivity.drawableIds;
+import static com.tudorc.foundyou.Constants.PLACES_ICONS;
 
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -273,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements
     private Map<String, Marker> memberMarker;
     private Map<String, Marker> placeMarker;
     private String mMemberUID;
+    private String placeKey;
 
 
     public DrawerLayout mDrawerLayout;
@@ -300,6 +302,7 @@ public class MainActivity extends AppCompatActivity implements
     private Target mTarget;
 
     public Bitmap mBitmap;
+    public Bitmap mUserBitmap;
 
     public ArrayList<String> tribesList;
     public static ArrayList<String> tribesListNames;
@@ -613,17 +616,7 @@ public class MainActivity extends AppCompatActivity implements
                 // Handle navigation view item clicks here.
                 int id = v.getId();
 
-                if (id == R.id.nav_camera) {
-                    // Handle the camera action
-                } else if (id == R.id.nav_gallery) {
-
-                } else if (id == R.id.nav_slideshow) {
-
-                } else if (id == R.id.nav_share) {
-
-                } else if (id == R.id.nav_send) {
-
-                } else if (id == R.id.nav_settings) {
+                if (id == R.id.nav_settings) {
                     startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 } else if (id == R.id.create_tribe) {
                     startActivity(new Intent(MainActivity.this, CreateTribeActivity.class));
@@ -635,8 +628,10 @@ public class MainActivity extends AppCompatActivity implements
                     Intent intent = new Intent(MainActivity.this, InviteActivity.class);
                     intent.putExtra("mLastTribeUID",mLastTribeUID);
                     startActivity(intent);
+                } else if (id == R.id.nav_chat) {
+                    startActivity(new Intent(MainActivity.this, ChatActivity.class));
                 } else if (id == R.id.nav_faqs) {
-                    startActivity(new Intent(MainActivity.this, InviteActivity.class));
+                    startActivity(new Intent(MainActivity.this, FAQActivity.class));
                 }
             }
         };
@@ -645,6 +640,7 @@ public class MainActivity extends AppCompatActivity implements
         findViewById(R.id.nav_settings).setOnClickListener(handleClick);
         findViewById(R.id.nav_invite).setOnClickListener(handleClick);
         findViewById(R.id.nav_places).setOnClickListener(handleClick);
+        findViewById(R.id.nav_chat).setOnClickListener(handleClick);
         findViewById(R.id.nav_faqs).setOnClickListener(handleClick);
         updateTribesList();
     }
@@ -656,7 +652,7 @@ public class MainActivity extends AppCompatActivity implements
 
         ExpandedMenuModel item1 = new ExpandedMenuModel();
         item1.setIconName(mNameTribe);
-        item1.setIconImg(R.drawable.fireplace);
+        item1.setIconImg(R.drawable.checkmark);
         // Adding data header
         listDataHeader.add(item1);
 
@@ -786,11 +782,13 @@ public class MainActivity extends AppCompatActivity implements
             super.onBackPressed();
         }
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem actionOverflow = menu.findItem(R.id.action_overflow);
+        actionOverflow.setTitle("CHECK IN");
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -830,6 +828,37 @@ public class MainActivity extends AppCompatActivity implements
 
     private void addMarkersToMap() {
         mBitmap = setUserMarkerBitmap ();
+        if (mBitmap == null) {
+            String[] parts = mUsername.split(" ");
+            mInitials = parts[0].charAt(0) + "" + parts[parts.length - 1].charAt(0);
+
+            ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
+            int color = generator.getColor(mUID);
+            Log.w(TAG, "Initials: " + mInitials);
+            TextDrawable mProfileInitials = TextDrawable.builder()
+                    .buildRound(mInitials, color);
+            mProfileInitialsView.setImageDrawable(mProfileInitials);
+            mProfilePictureView.setVisibility(View.GONE);
+            mProfileInitialsView.setVisibility(View.VISIBLE);
+
+            int width = mProfileInitials.getIntrinsicWidth();
+            width = width > 0 ? width : 96; // Replaced the 1 by a 96
+            int height = mProfileInitials.getIntrinsicHeight();
+            height = height > 0 ? height : 96; // Replaced the 1 by a 96
+
+            mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(mBitmap);
+            mProfileInitials.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            mProfileInitials.draw(canvas);
+            if (mBitmap == null) {
+                mBitmap = BitmapFactory.decodeResource(getResources(),
+                        R.drawable.location);
+            }
+        }
+
+
+
+
 
         if (mCurrentLocation != null) {
             mUserMarker = mMap.addMarker(new MarkerOptions()
@@ -1062,12 +1091,14 @@ public class MainActivity extends AppCompatActivity implements
                 mDatabase.child("tribes").child(mLastTribeUID).child("members").child(mUID).child("longitude").setValue(mCurrentLocation.getLongitude());
                 mDatabase.child("tribes").child(mLastTribeUID).child("members").child(mUID).child("lastTime").setValue(mLastUpdateTime);
             }
+/*
             mLatitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLatitudeLabel,
                     mCurrentLocation.getLatitude()));
             mLongitudeTextView.setText(String.format(Locale.ENGLISH, "%s: %f", mLongitudeLabel,
                     mCurrentLocation.getLongitude()));
             mLastUpdateTimeTextView.setText(String.format(Locale.ENGLISH, "%s: %s",
                     mLastUpdateTimeLabel, mLastUpdateTime));
+*/
             if (mCurrentLocation != null && mUserMarker != null)
                 mUserMarker.setPosition(new LatLng(mCurrentLocation.getLatitude(),mCurrentLocation.getLongitude()));
         }
@@ -1084,9 +1115,10 @@ public class MainActivity extends AppCompatActivity implements
                 ArrayList locationTime = entry.getValue();
                 LatLng location = (LatLng) locationTime.get(0);
                 String lastTime = (String) locationTime.get(1);
+                String url = (String) locationTime.get(2);
                 memberMarker.put(member, mMap.addMarker(new MarkerOptions()
                         .position(location)
-                        .icon(fromBitmap(mBitmap))
+                        .icon(fromBitmap(setMarkerBitmap(url)))
                         .snippet("Last update: "+lastTime)
                         .title(member)));
             }
@@ -1099,7 +1131,7 @@ public class MainActivity extends AppCompatActivity implements
                 String name = (String) nameLocationIcon.get(0);
                 LatLng location = (LatLng) locationTime.get(1);
                 int icon = (int) locationTime.get(2);
-                memberMarker.put(place, mMap.addMarker(new MarkerOptions()
+                placeMarker.put(place, mMap.addMarker(new MarkerOptions()
                         .position(location)
                         .icon(BitmapDescriptorFactory.fromResource(icon))
                         .title(name)));
@@ -1140,58 +1172,10 @@ public class MainActivity extends AppCompatActivity implements
                         if (dataSnapshot.exists()) {
                             members.add(dataSnapshot.getKey());
                         }
-                        if (dataSnapshot.exists() &&
-                            !dataSnapshot.getKey().equals(mUID) &&
-                            dataSnapshot.child("latitude").getValue() != null &&
-                            dataSnapshot.child("longitude").getValue() != null &&
-                            dataSnapshot.child("lastTime").getValue() != null) {
-                                mMemberUID = dataSnapshot.getKey();
-                                Log.w(" the member", mMemberUID);
-                                double mLastLat = (double) dataSnapshot.child("latitude").getValue();
-                                double mLastLong = (double) dataSnapshot.child("longitude").getValue();
-                                String mLastUpdatedTime = (String) dataSnapshot.child("lastTime").getValue();
-                                LatLng mLastLocation = new LatLng(mLastLat, mLastLong);
-                                ArrayList mLocationTime = new ArrayList<>();
-                                mLocationTime.add(0, mLastLocation);
-                                mLocationTime.add(1, mLastUpdatedTime);
-                                membersLocations.put(mMemberUID, mLocationTime);
-                                if (!memberMarker.containsKey(mMemberUID)) {
-                                    memberMarker.put(mMemberUID, mMap.addMarker(new MarkerOptions()
-                                            .position(mLastLocation)
-                                            .title(mMemberUID)
-                                            .snippet("Last update: "+mLastUpdatedTime)
-                                            .icon(fromBitmap(mBitmap))));
-                                }
-                                else{
-                                    memberMarker.get(mMemberUID).setPosition(mLastLocation);
-                                }
-                                Log.w(" The Data", " " + mMemberUID + " " + membersLocations.toString());
-                            }
+                        handleMemberSnapshot(dataSnapshot);
                         }
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        if (dataSnapshot.exists() &&
-                            !dataSnapshot.getKey().equals(mUID) &&
-                            dataSnapshot.child("latitude").getValue() != null &&
-                            dataSnapshot.child("longitude").getValue() != null &&
-                            dataSnapshot.child("lastTime").getValue() != null) {
-                                mMemberUID = dataSnapshot.getKey();
-                                Log.w(" the member", mMemberUID);
-                                double mLastLat = (double) dataSnapshot.child("latitude").getValue();
-                                double mLastLong = (double) dataSnapshot.child("longitude").getValue();
-                                String mLastUpdatedTime = (String) dataSnapshot.child("lastTime").getValue();
-                                LatLng mLastLocation = new LatLng(mLastLat, mLastLong);
-                                ArrayList mLocationTime = new ArrayList<>();
-                                mLocationTime.add(0, mLastLocation);
-                                mLocationTime.add(1, mLastUpdatedTime);
-                                if (!memberMarker.containsKey(mMemberUID)) {
-                                    memberMarker.put(mMemberUID, mMap.addMarker(new MarkerOptions()
-                                            .position(mLastLocation)
-                                            .snippet("Last update: "+mLastUpdatedTime)
-                                            .icon(fromBitmap(mBitmap))));
-                                } else {
-                                    memberMarker.get(mMemberUID).setPosition(mLastLocation);
-                                }
-                        }
+                        handleMemberSnapshot(dataSnapshot);
                     }
                     public void onChildRemoved(DataSnapshot dataSnapshot) {}
                     public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
@@ -1204,56 +1188,10 @@ public class MainActivity extends AppCompatActivity implements
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                        if (dataSnapshot.exists() &&
-                                dataSnapshot.child("latitude").getValue() != null &&
-                                dataSnapshot.child("longitude").getValue() != null &&
-                                dataSnapshot.child("icon").getValue() != null &&
-                                dataSnapshot.child("name").getValue() != null) {
-                            String placeKey = (String) dataSnapshot.getKey();
-                            String name = (String) dataSnapshot.child("name").getValue();
-                            double mLastLat = (double) dataSnapshot.child("latitude").getValue();
-                            double mLastLong = (double) dataSnapshot.child("longitude").getValue();
-                            String iconType = (String) dataSnapshot.child("icon").getValue();
-                            Integer icon = (Integer) drawableIds.get(iconType);
-                            LatLng mLastLocation = new LatLng(mLastLat, mLastLong);
-                            ArrayList nameLocationIcon = new ArrayList<>();
-                            nameLocationIcon.add(0, name);
-                            nameLocationIcon.add(1, mLastLocation);
-                            nameLocationIcon.add(2, icon);
-                            placesLocations.put(placeKey, nameLocationIcon);
-                            if (!placeMarker.containsKey(placeKey)) {
-                                placeMarker.put(placeKey, mMap.addMarker(new MarkerOptions()
-                                        .position(mLastLocation)
-                                        .title(name)
-                                        .icon(BitmapDescriptorFactory.fromResource(icon))));
-                            }
-                        }
+                        handlePlaceSnapshot(dataSnapshot);
                     }
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        if (dataSnapshot.exists() &&
-                                dataSnapshot.child("latitude").getValue() != null &&
-                                dataSnapshot.child("longitude").getValue() != null &&
-                                dataSnapshot.child("icon").getValue() != null &&
-                                dataSnapshot.child("name").getValue() != null) {
-                            String placeKey = (String) dataSnapshot.getKey();
-                            String name = (String) dataSnapshot.child("name").getValue();
-                            double mLastLat = (double) dataSnapshot.child("latitude").getValue();
-                            double mLastLong = (double) dataSnapshot.child("longitude").getValue();
-                            String iconType = (String) dataSnapshot.child("icon").getValue();
-                            Integer icon = (Integer) drawableIds.get(iconType);
-                            LatLng mLastLocation = new LatLng(mLastLat, mLastLong);
-                            ArrayList nameLocationIcon = new ArrayList<>();
-                            nameLocationIcon.add(0, name);
-                            nameLocationIcon.add(1, mLastLocation);
-                            nameLocationIcon.add(2, icon);
-                            placesLocations.put(placeKey, nameLocationIcon);
-                            if (!placeMarker.containsKey(placeKey)) {
-                                placeMarker.put(placeKey, mMap.addMarker(new MarkerOptions()
-                                        .position(mLastLocation)
-                                        .title(name)
-                                        .icon(BitmapDescriptorFactory.fromResource(icon))));
-                            }
-                        }
+                        handlePlaceSnapshot (dataSnapshot);
                     }
                     public void onChildRemoved(DataSnapshot dataSnapshot) {}
                     public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
@@ -1261,6 +1199,66 @@ public class MainActivity extends AppCompatActivity implements
                 });
 
     }
+
+    public void handleMemberSnapshot (DataSnapshot dataSnapshot){
+        if (dataSnapshot.exists() &&
+                !dataSnapshot.getKey().equals(mUID) &&
+                dataSnapshot.child("latitude").getValue() != null &&
+                dataSnapshot.child("longitude").getValue() != null &&
+                dataSnapshot.child("lastTime").getValue() != null) {
+            mMemberUID = dataSnapshot.getKey();
+            Log.w(" the member", mMemberUID);
+            double mLastLat = (double) dataSnapshot.child("latitude").getValue();
+            double mLastLong = (double) dataSnapshot.child("longitude").getValue();
+            String mLastUpdatedTime = (String) dataSnapshot.child("lastTime").getValue();
+            String mURL = (String) dataSnapshot.child("url").getValue();
+            LatLng mLastLocation = new LatLng(mLastLat, mLastLong);
+            ArrayList mLocationTime = new ArrayList<>();
+            mLocationTime.add(0, mLastLocation);
+            mLocationTime.add(1, mLastUpdatedTime);
+            mLocationTime.add(2, mURL);
+            membersLocations.put(mMemberUID, mLocationTime);
+
+            if (!memberMarker.containsKey(mMemberUID) && mMap!= null && mLastLocation!= null) {
+                memberMarker.put(mMemberUID, mMap.addMarker(new MarkerOptions()
+                        .position(mLastLocation)
+                        .snippet("Last update: "+mLastUpdatedTime)
+                        .icon(fromBitmap(setMarkerBitmap(mURL)))));
+            } else if (memberMarker.get(mMemberUID)!= null && mMap!= null && mLastLocation!= null){
+                memberMarker.get(mMemberUID).setPosition(mLastLocation);
+            }
+        }
+    }
+
+
+    public void handlePlaceSnapshot (DataSnapshot dataSnapshot)
+    {   if (dataSnapshot.exists() &&
+                dataSnapshot.child("latitude").getValue() != null &&
+                dataSnapshot.child("longitude").getValue() != null &&
+                dataSnapshot.child("icon").getValue() != null &&
+                dataSnapshot.child("name").getValue() != null) {
+            placeKey = dataSnapshot.getKey();
+            String name = (String) dataSnapshot.child("name").getValue();
+            double mLastLat = (double) dataSnapshot.child("latitude").getValue();
+            double mLastLong = (double) dataSnapshot.child("longitude").getValue();
+            String iconType = (String) dataSnapshot.child("icon").getValue();
+            Integer icon = PLACES_ICONS.get(iconType);
+            LatLng mLastLocation = new LatLng(mLastLat, mLastLong);
+            ArrayList nameLocationIcon = new ArrayList<>();
+            nameLocationIcon.add(0, name);
+            nameLocationIcon.add(1, mLastLocation);
+            nameLocationIcon.add(2, icon);
+            placesLocations.put(placeKey, nameLocationIcon);
+            if (!placeMarker.containsKey(placeKey) && mMap!= null) {
+                placeMarker.put(placeKey, mMap.addMarker(new MarkerOptions()
+                        .position(mLastLocation)
+                        .title(name)
+                        .icon(BitmapDescriptorFactory.fromResource(icon))));
+            }
+        }
+    }
+
+
     /**
      * Stores activity data in the Bundle.
      */
@@ -1853,6 +1851,10 @@ public class MainActivity extends AppCompatActivity implements
                     .into(mTarget);
             Log.w("bitmap"," Am facut bitmapul");
         }
+/*
+        mDatabase.child("tribes").child(mLastTribeUID).child("members").child(mUID).child("icon").setValue("mBitmap");
+*/
+        //TODO Set Bitmap
         return mBitmap;
     }
     public void sendNotification(String notificationDetails) {
@@ -1895,5 +1897,61 @@ public class MainActivity extends AppCompatActivity implements
 
         // Issue the notification
         mNotificationManager.notify(0, builder.build());
+    }
+
+
+    private Bitmap setMarkerBitmap (String mURL){
+        if (mURL == null || mURL.indexOf("default") > 0) {
+            String[] parts = mUsername.split(" ");
+            mInitials = parts[0].charAt(0) + "" + parts[parts.length - 1].charAt(0);
+
+            ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
+            int color = generator.getColor(mUID);
+            Log.w(TAG, "Initials: " + mInitials);
+            TextDrawable mProfileInitials = TextDrawable.builder()
+                    .buildRound(mInitials, color);
+
+            int width = mProfileInitials.getIntrinsicWidth();
+            width = width > 0 ? width : 96; // Replaced the 1 by a 96
+            int height = mProfileInitials.getIntrinsicHeight();
+            height = height > 0 ? height : 96; // Replaced the 1 by a 96
+
+            mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(mBitmap);
+            mProfileInitials.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            mProfileInitials.draw(canvas);
+        } else {
+            mTarget = new Target() {
+                @Override
+                public void onBitmapLoaded (final Bitmap bitmap, Picasso.LoadedFrom from){
+                    Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                            bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas canvas = new Canvas(output);
+
+                    final int color = 0xff424242;
+                    final Paint paint = new Paint();
+                    final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+                    paint.setAntiAlias(true);
+                    canvas.drawARGB(0, 0, 0, 0);
+                    paint.setColor(color);
+                    // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+                    canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
+                            bitmap.getWidth() / 2, paint);
+                    paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+                    canvas.drawBitmap(bitmap, rect, rect, paint);
+                    mBitmap = output;
+                }
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {}
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {}
+            };
+            Picasso.with(this.getApplicationContext())
+                    .load(mURL)
+                    .into(mTarget);
+        }
+        mBitmap = Bitmap.createScaledBitmap(mBitmap, 96, 96, false);
+        return mBitmap;
     }
 }

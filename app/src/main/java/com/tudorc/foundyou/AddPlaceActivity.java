@@ -3,6 +3,7 @@ package com.tudorc.foundyou;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -71,34 +72,37 @@ public class AddPlaceActivity extends AppCompatActivity implements
             "Home", //2
             "Work", //3
             "Grocery Store", //4
-            "Gym", //5
-            "Restaurant", //6
-            "Club", //7
-            "Pub", //8
-            "Cafe", //9
-            "School", //10
-            "Park", //11
+            "School", //5
+            "Park", //6
+            "Restaurant", //7
+            "Club", //8
+            "Pub", //9
+            "Cafe", //10
+            "Gym", //11
             "Gas Station", //12
-            "Transport Station"}; //13
+            "Transport Station",
+            "Lover"}; //13
     private Integer[] imageArray = {
             R.drawable.marker, //1
             R.drawable.home, //2
             R.drawable.briefcase, //3
             R.drawable.shopping_cart, //4
-            R.drawable.dumbbell, //5
-            R.drawable.restaurant, //6
-            R.drawable.cocktail, //7
-            R.drawable.beer, //8
-            R.drawable.cafe, //9
-            R.drawable.graduation_cap, //10
-            R.drawable.oak_tree, //11
+            R.drawable.graduation_cap, //5
+            R.drawable.oak_tree, //6
+            R.drawable.restaurant, //7
+            R.drawable.cocktail, //8
+            R.drawable.beer, //9
+            R.drawable.cafe, //10
+            R.drawable.dumbbell, //11
             R.drawable.gas_station, //12
-            R.drawable.bus};//13
+            R.drawable.bus,
+            R.drawable.heart};//13
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_place);
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -139,6 +143,8 @@ public class AddPlaceActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_custom_overflow, menu);
+        MenuItem actionOverflow = menu.findItem(R.id.action_overflow);
+        actionOverflow.setTitle("SAVE");
         return true;
     }
 
@@ -171,24 +177,10 @@ public class AddPlaceActivity extends AppCompatActivity implements
 
         mCurrentLocationMarker = mMap.addMarker(new MarkerOptions()
                 .position(mUserMarker.getPosition())
-                .icon(vectorToBitmap(R.drawable.fireplace, Color.parseColor("#A4C639"))));
+                .icon(fromBitmap(BitmapFactory.decodeResource(getResources(),
+                        R.drawable.location))));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mUserMarker.getPosition(), 17));
     }
-
-
-
-    private BitmapDescriptor vectorToBitmap(@DrawableRes int id, @ColorInt int color) {
-        Drawable vectorDrawable = ResourcesCompat.getDrawable(getResources(), id, null);
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
-                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        DrawableCompat.setTint(vectorDrawable, color);
-        vectorDrawable.draw(canvas);
-        return fromBitmap(bitmap);
-    }
-
-
 
     private void openAutocompleteActivity() {
         try {
@@ -291,5 +283,6 @@ public class AddPlaceActivity extends AppCompatActivity implements
 
         return super.onOptionsItemSelected(item);
     }
+
 }
 

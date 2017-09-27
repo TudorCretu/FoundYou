@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.tudorc.foundyou.Constants.PLACES_ICONS;
 import static com.tudorc.foundyou.MainActivity.mDatabase;
 import static com.tudorc.foundyou.MainActivity.mLastTribeUID;
 
@@ -27,29 +28,12 @@ public class PlacesActivity extends AppCompatActivity {
     ArrayList<Place> placeList;
     ListView listView;
     private static PlacesListAdapter adapter;
-    private Toolbar toolbar;
     private ChildEventListener cListener;
-    public static Map<String,Integer> drawableIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_places);
-
-        drawableIds =  new HashMap<String, Integer>();
-        drawableIds.put("Home",R.drawable.home);
-        drawableIds.put("Work",R.drawable.briefcase);
-        drawableIds.put("Gym",R.drawable.arrow);
-        drawableIds.put("Restuarant",R.drawable.arrow);
-        drawableIds.put("Club",R.drawable.arrow);
-        drawableIds.put("Pub",R.drawable.arrow);
-        drawableIds.put("School",R.drawable.arrow);
-        drawableIds.put("Cafe",R.drawable.arrow);
-        drawableIds.put("Gas Station",R.drawable.arrow);
-        drawableIds.put("Transport Station",R.drawable.arrow);
-        drawableIds.put("Park",R.drawable.arrow);
-        drawableIds.put("Grocery Store",R.drawable.arrow);
-        drawableIds.put("Default",R.drawable.arrow);
 
         listView=(ListView)findViewById(R.id.list);
         placeList = new ArrayList<>();
@@ -63,7 +47,7 @@ public class PlacesActivity extends AppCompatActivity {
                             String name = (String) dataSnapshot.child("name").getValue();
                             placeList.add(new Place(icon,name));
 
-                            adapter= new PlacesListAdapter(placeList,getApplicationContext(),drawableIds);
+                            adapter= new PlacesListAdapter(placeList,getApplicationContext(),PLACES_ICONS);
                             listView.setAdapter(adapter);
                         }
                     }

@@ -128,6 +128,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tudorc.foundyou.PlacesActivity" />
         </activity>
+        <activity
+            android:name=".FAQActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tudorc.foundyou.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
