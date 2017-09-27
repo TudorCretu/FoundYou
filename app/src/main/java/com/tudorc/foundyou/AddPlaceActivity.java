@@ -81,19 +81,19 @@ public class AddPlaceActivity extends AppCompatActivity implements
             "Gas Station", //12
             "Transport Station"}; //13
     private Integer[] imageArray = {
-            R.drawable.arrow, //1
-            R.drawable.arrow, //2
-            R.drawable.arrow, //3
-            R.drawable.arrow, //4
-            R.drawable.arrow, //5
-            R.drawable.arrow, //6
-            R.drawable.arrow, //7
-            R.drawable.arrow, //8
-            R.drawable.arrow, //9
-            R.drawable.arrow, //10
-            R.drawable.arrow, //11
-            R.drawable.arrow, //12
-            R.drawable.arrow};//13
+            R.drawable.marker, //1
+            R.drawable.home, //2
+            R.drawable.briefcase, //3
+            R.drawable.shopping_cart, //4
+            R.drawable.dumbbell, //5
+            R.drawable.restaurant, //6
+            R.drawable.cocktail, //7
+            R.drawable.beer, //8
+            R.drawable.cafe, //9
+            R.drawable.graduation_cap, //10
+            R.drawable.oak_tree, //11
+            R.drawable.gas_station, //12
+            R.drawable.bus};//13
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -263,7 +263,7 @@ public class AddPlaceActivity extends AppCompatActivity implements
             Double longitude = mMap.getCameraPosition().target.longitude;
             String iconType = (String) spinner.getSelectedItem().toString();
             String placeUID = (String) UUID.randomUUID().toString();
-            Float radius =1500f;
+            Float radius =1500.3f;
             mDatabase.child("places").child(mLastTribeUID).child(placeUID).child("name").setValue(name);
             mDatabase.child("places").child(mLastTribeUID).child(placeUID).child("latitude").setValue(latitude);
             mDatabase.child("places").child(mLastTribeUID).child(placeUID).child("longitude").setValue(longitude);

@@ -118,9 +118,7 @@
             android:id="@+id/center_marker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/messenger_bubble_large_blue"
-
-            />
+            android:src="@drawable/marker"/>
     </FrameLayout>
 
     <SeekBar

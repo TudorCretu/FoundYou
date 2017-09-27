@@ -18,9 +18,7 @@ android:fitsSystemWindows="true">
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         android:background="@android:color/white"
-        app:headerLayout="@layout/nav_header_main"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        app:headerLayout="@layout/nav_header_main">
 
         <TextView
             android:layout_width="wrap_content"

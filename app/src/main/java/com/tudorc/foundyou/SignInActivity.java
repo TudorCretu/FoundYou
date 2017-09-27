@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -41,6 +43,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -126,9 +129,10 @@ public class SignInActivity extends BaseActivity implements
         setContentView(R.layout.activity_signin);
         mAuth = FirebaseAuth.getInstance();
 
-
+        setGooglePlusButtonText((SignInButton) findViewById(R.id.google_login_button), "Log in with Google");
         // Button listeners
         findViewById(R.id.google_login_button).setOnClickListener(this);
+
 
         // [START config_signin]
         // Configure Google Sign In
@@ -163,11 +167,8 @@ public class SignInActivity extends BaseActivity implements
         // [END initialize_twitter_login]
 
         mCallbackManager = CallbackManager.Factory.create();
-        Log.w(Facebook_TAG,"Finds the button");
         LoginButton loginButton = (LoginButton) findViewById(R.id.facebook_login_button);
-        Log.w(Facebook_TAG,"Reads permission");
         loginButton.setReadPermissions("email", "public_profile");
-        Log.w(Facebook_TAG,"registerCallback");
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -232,11 +233,8 @@ public class SignInActivity extends BaseActivity implements
             public void onAuthStateChanged(@NonNull FirebaseAuth mAuth) {
                 mUser = mAuth.getCurrentUser();
                 if (mUser != null) {
-                    // User is signed in
-                    Log.w(Facebook_TAG, "please, just go to main");
                     startActivity(goMain);
                 } else {
-                    Log.w(Facebook_TAG,"User is F NULL!");
                 }
             }
         };
@@ -249,7 +247,6 @@ public class SignInActivity extends BaseActivity implements
         super.onResume();
         mUser = mAuth.getCurrentUser();
         if (mUser != null) {
-            Log.w(TAG, "S-a dus de la onResume");
             startActivity(goMain);
         }
     }
@@ -309,7 +306,7 @@ public class SignInActivity extends BaseActivity implements
         if (i == R.id.google_login_button) {
             signIn();
         } else if (i == R.id.EmailPassword_login_button) {
-            startActivity(new Intent(this, EmailPasswordActivity.class));
+            startActivity(new Intent(SignInActivity.this, EmailPasswordActivity.class));
         }
     }
 
@@ -402,15 +399,41 @@ public class SignInActivity extends BaseActivity implements
                 // [END_EXCLUDE]
             }
         }
-
         else if(requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE) {
             mLoginButton.onActivityResult(requestCode, resultCode, data);
         }
-
         else if(requestCode == CallbackManagerImpl.RequestCodeOffset.Login.toRequestCode()){
             Log.w(Facebook_TAG,"Here it is the callbackManager");
             // Pass the activity result back to the Facebook SDK
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
+    protected void setGooglePlusButtonText(SignInButton signInButton, String buttonText) {
+        // Find the TextView that is inside of the SignInButton and set its text
+        for (int i = 0; i < signInButton.getChildCount(); i++) {
+            View v = signInButton.getChildAt(i);
+
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setText(buttonText);
+                tv.setTextSize(18);
+                return;
+            }
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState){
+        super.onPostCreate(savedInstanceState);
+        LoginButton loginButton = (LoginButton) findViewById(R.id.facebook_login_button);
+        float fbIconScale = 1.55F;
+        Drawable drawable = getResources().getDrawable(
+                com.facebook.R.drawable.com_facebook_button_icon);
+        drawable.setBounds(0, 0, (int)(drawable.getIntrinsicWidth()*fbIconScale),
+                (int)(drawable.getIntrinsicHeight()*fbIconScale));
+        loginButton.setCompoundDrawables(drawable, null, null, null);
+        loginButton.setCompoundDrawablePadding(getResources().
+                getDimensionPixelSize(R.dimen.text_margin));
+    }
+
 }

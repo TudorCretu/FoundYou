@@ -29,7 +29,7 @@ public class PlacesActivity extends AppCompatActivity {
     private static PlacesListAdapter adapter;
     private Toolbar toolbar;
     private ChildEventListener cListener;
-    private Map<String,Integer> drawableIds;
+    public static Map<String,Integer> drawableIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +37,8 @@ public class PlacesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_places);
 
         drawableIds =  new HashMap<String, Integer>();
-        drawableIds.put("Home",R.drawable.arrow);
-        drawableIds.put("Work",R.drawable.arrow);
+        drawableIds.put("Home",R.drawable.home);
+        drawableIds.put("Work",R.drawable.briefcase);
         drawableIds.put("Gym",R.drawable.arrow);
         drawableIds.put("Restuarant",R.drawable.arrow);
         drawableIds.put("Club",R.drawable.arrow);

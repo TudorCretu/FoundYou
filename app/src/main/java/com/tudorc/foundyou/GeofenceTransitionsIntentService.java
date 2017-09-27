@@ -40,6 +40,7 @@ import java.util.List;
 import static com.tudorc.foundyou.MainActivity.mDatabase;
 import static com.tudorc.foundyou.MainActivity.mLastTribeUID;
 import static com.tudorc.foundyou.MainActivity.mUID;
+import static com.tudorc.foundyou.MainActivity.mUser;
 
 /**
  * Listener for geofence transition changes.
@@ -61,6 +62,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         super(TAG);
     }
 
+    public Integer geofenceTransition;
     /**
      * Handles incoming intents.
      * @param intent sent by Location Services. This Intent is provided to Location
@@ -77,7 +79,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         }
 
         // Get the transition type.
-        int geofenceTransition = geofencingEvent.getGeofenceTransition();
+        geofenceTransition = geofencingEvent.getGeofenceTransition();
 
         // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
@@ -92,7 +94,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
             // Send notification and log the transition details.
             for (Geofence geofence : triggeringGeofences) {
-                ValueEventListener svlistener = mDatabase.child("geofences").child(mUID).child(geofence.getRequestId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                mDatabase.child("geofences").child(mUID).child(geofence.getRequestId()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         if (snapshot.exists() && snapshot.getValue() != null) {
@@ -100,15 +102,25 @@ public class GeofenceTransitionsIntentService extends IntentService {
                             double placeLat = (double) snapshot.child("latitude").getValue();
                             double placeLong = (double) snapshot.child("longitude").getValue();
                             float placeRadius = (float) snapshot.child("radius").getValue();
-                            String userName = (String) ;
+                            String userName = (String) mUser.getDisplayName();
+                            final String notificationString = userName + " " + getTransitionString(geofenceTransition) + " at" + placeName;
                             //TODO create a text string for notification and set the text to alert to each tribe's member
                             // TODO set a listener for notification and display notification
-                            mLastTribeUID = snapshot.getValue().toString();
-
-                        } else {
-
-                        }
-                    }
+                            String mTribe = (String) snapshot.getValue().toString();
+                            if (mTribe!= null) {
+                            mDatabase.child("tribes").child(mTribe).child("members")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                                                String member = (String) postSnapshot.getValue();
+                                                mDatabase.child("alerts").child(member).setValue(notificationString);
+                                            }
+                                        }
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                        }
+                        });}}}
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -153,7 +165,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
      * Posts a notification in the notification bar when a transition is detected.
      * If the user clicks the notification, control goes to the MainActivity.
      */
-    private void sendNotification(String notificationDetails) {
+    public void sendNotification(String notificationDetails) {
         // Create an explicit content Intent that starts the main Activity.
         Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
 

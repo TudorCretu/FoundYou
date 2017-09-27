@@ -385,6 +385,8 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
 
+    <string name="com_facebook_loginview_log_in_button">Log in with Facebook</string>
+
     <string name="place_details">
     <![CDATA[
         <b>%1$s</b>

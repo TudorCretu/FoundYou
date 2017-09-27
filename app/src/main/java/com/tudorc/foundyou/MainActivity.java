@@ -2,6 +2,7 @@ package com.tudorc.foundyou;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -34,6 +36,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -120,6 +124,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static com.google.android.gms.maps.model.BitmapDescriptorFactory.fromBitmap;
+import static com.tudorc.foundyou.PlacesActivity.drawableIds;
 
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
@@ -263,8 +268,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private ArrayList locationTime;
     private Map<String, ArrayList> membersLocations;
+    private Map<String, ArrayList> placesLocations;
     public static ArrayList<String> members;
     private Map<String, Marker> memberMarker;
+    private Map<String, Marker> placeMarker;
     private String mMemberUID;
 
 
@@ -303,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements
     public ChildEventListener cListener2;
     public ChildEventListener cListener3;
     public ChildEventListener cListener4;
+    public ChildEventListener cListener5;
     public ValueEventListener vListener1;
     public ValueEventListener vListener2;
 
@@ -462,7 +470,20 @@ public class MainActivity extends AppCompatActivity implements
         // Kick off the request to build GoogleApiClient.
         buildGoogleApiClient();
 
-        }
+        if (vListener1 == null)
+            vListener1 = mDatabase.child("alerts").child(mUID).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.exists() && snapshot.getValue() != null) {
+                        sendNotification(snapshot.getValue().toString());
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+    }
 
     private void getTribesNames(){
         tribesList = new ArrayList<String>();
@@ -1070,6 +1091,20 @@ public class MainActivity extends AppCompatActivity implements
                         .title(member)));
             }
         }
+        if (placesLocations != null) {
+            for (Map.Entry<String, ArrayList> entry : placesLocations.entrySet()) {
+                String place = entry.getKey();
+                Log.w("le map",entry.toString());
+                ArrayList nameLocationIcon = entry.getValue();
+                String name = (String) nameLocationIcon.get(0);
+                LatLng location = (LatLng) locationTime.get(1);
+                int icon = (int) locationTime.get(2);
+                memberMarker.put(place, mMap.addMarker(new MarkerOptions()
+                        .position(location)
+                        .icon(BitmapDescriptorFactory.fromResource(icon))
+                        .title(name)));
+            }
+        }
     }
     /**
      * Removes location updates from the FusedLocationApi.
@@ -1162,6 +1197,69 @@ public class MainActivity extends AppCompatActivity implements
                     public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
                     public void onCancelled(DatabaseError firebaseError) {}
                 });
+
+        placesLocations = new HashMap<String, ArrayList>();
+        placeMarker = new HashMap<String, Marker>();
+        cListener5 = mDatabase.child("tribes").child(mLastTribeUID).child("places")
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                        if (dataSnapshot.exists() &&
+                                dataSnapshot.child("latitude").getValue() != null &&
+                                dataSnapshot.child("longitude").getValue() != null &&
+                                dataSnapshot.child("icon").getValue() != null &&
+                                dataSnapshot.child("name").getValue() != null) {
+                            String placeKey = (String) dataSnapshot.getKey();
+                            String name = (String) dataSnapshot.child("name").getValue();
+                            double mLastLat = (double) dataSnapshot.child("latitude").getValue();
+                            double mLastLong = (double) dataSnapshot.child("longitude").getValue();
+                            String iconType = (String) dataSnapshot.child("icon").getValue();
+                            Integer icon = (Integer) drawableIds.get(iconType);
+                            LatLng mLastLocation = new LatLng(mLastLat, mLastLong);
+                            ArrayList nameLocationIcon = new ArrayList<>();
+                            nameLocationIcon.add(0, name);
+                            nameLocationIcon.add(1, mLastLocation);
+                            nameLocationIcon.add(2, icon);
+                            placesLocations.put(placeKey, nameLocationIcon);
+                            if (!placeMarker.containsKey(placeKey)) {
+                                placeMarker.put(placeKey, mMap.addMarker(new MarkerOptions()
+                                        .position(mLastLocation)
+                                        .title(name)
+                                        .icon(BitmapDescriptorFactory.fromResource(icon))));
+                            }
+                        }
+                    }
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        if (dataSnapshot.exists() &&
+                                dataSnapshot.child("latitude").getValue() != null &&
+                                dataSnapshot.child("longitude").getValue() != null &&
+                                dataSnapshot.child("icon").getValue() != null &&
+                                dataSnapshot.child("name").getValue() != null) {
+                            String placeKey = (String) dataSnapshot.getKey();
+                            String name = (String) dataSnapshot.child("name").getValue();
+                            double mLastLat = (double) dataSnapshot.child("latitude").getValue();
+                            double mLastLong = (double) dataSnapshot.child("longitude").getValue();
+                            String iconType = (String) dataSnapshot.child("icon").getValue();
+                            Integer icon = (Integer) drawableIds.get(iconType);
+                            LatLng mLastLocation = new LatLng(mLastLat, mLastLong);
+                            ArrayList nameLocationIcon = new ArrayList<>();
+                            nameLocationIcon.add(0, name);
+                            nameLocationIcon.add(1, mLastLocation);
+                            nameLocationIcon.add(2, icon);
+                            placesLocations.put(placeKey, nameLocationIcon);
+                            if (!placeMarker.containsKey(placeKey)) {
+                                placeMarker.put(placeKey, mMap.addMarker(new MarkerOptions()
+                                        .position(mLastLocation)
+                                        .title(name)
+                                        .icon(BitmapDescriptorFactory.fromResource(icon))));
+                            }
+                        }
+                    }
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {}
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+                    public void onCancelled(DatabaseError firebaseError) {}
+                });
+
     }
     /**
      * Stores activity data in the Bundle.
@@ -1345,12 +1443,19 @@ public class MainActivity extends AppCompatActivity implements
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                        if (dataSnapshot.exists()) {
+                        if (dataSnapshot.exists() &&
+                                dataSnapshot.child("name").getValue() != null &&
+                                dataSnapshot.child("latitude").getValue() != null &&
+                                dataSnapshot.child("longitude").getValue() != null &&
+                                dataSnapshot.child("radius").getValue() != null &&
+                                dataSnapshot.child("tribe").getValue() != null) {
                             String placeUID = dataSnapshot.getKey();
+                            Log.w("place ",dataSnapshot.toString());
                             String placeName = (String) dataSnapshot.child("name").getValue();
                             double placeLat = (double) dataSnapshot.child("latitude").getValue();
                             double placeLong = (double) dataSnapshot.child("longitude").getValue();
-                            float placeRadius = (float) dataSnapshot.child("radius").getValue();
+                            Double placeRadiusInterm = (Double) dataSnapshot.child("radius").getValue();
+                            float placeRadius = (float) placeRadiusInterm.floatValue();
 
                             mGeofenceList.add(new Geofence.Builder()
                                     // Set the request ID of the geofence. This is a string to identify this
@@ -1749,5 +1854,46 @@ public class MainActivity extends AppCompatActivity implements
             Log.w("bitmap"," Am facut bitmapul");
         }
         return mBitmap;
+    }
+    public void sendNotification(String notificationDetails) {
+        // Create an explicit content Intent that starts the main Activity.
+        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+
+        // Construct a task stack.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        // Add the main Activity to the task stack as the parent.
+        stackBuilder.addParentStack(MainActivity.class);
+
+        // Push the content Intent onto the stack.
+        stackBuilder.addNextIntent(notificationIntent);
+
+        // Get a PendingIntent containing the entire back stack.
+        PendingIntent notificationPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Get a notification builder that's compatible with platform versions >= 4
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        // Define the notification settings.
+        builder.setSmallIcon(R.mipmap.ic_launcher)
+                // In a real app, you may want to use a library like Volley
+                // to decode the Bitmap.
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                        R.mipmap.ic_launcher))
+                .setColor(Color.RED)
+                .setContentTitle(notificationDetails)
+                .setContentText(getString(R.string.geofence_transition_notification_text))
+                .setContentIntent(notificationPendingIntent);
+
+        // Dismiss notification once the user touches it.
+        builder.setAutoCancel(true);
+
+        // Get an instance of the Notification manager
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Issue the notification
+        mNotificationManager.notify(0, builder.build());
     }
 }
