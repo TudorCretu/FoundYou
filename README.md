@@ -1,5 +1,18 @@
 #FoundYou!#
 
+![Notification Lock Screen]({{site.baseurl}}/Screenshot_20170928-011613.png)
+![Notification]({{site.baseurl}}/Screenshot_20170928-011701.png)
+![Main Activity]({{site.baseurl}}/Screenshot_20170928-015941.png)
+![Navigation Drawer]({{site.baseurl}}/Screenshot_20170928-020008.png)
+![Navigation Expanded List]({{site.baseurl}}/Screenshot_20170928-020011.png)
+![Login Activity]({{site.baseurl}}/Screenshot_20170928-020228.png)
+![Places List]({{site.baseurl}}/Screenshot_20170928-020329.png)
+![Place Finder]({{site.baseurl}}/Screenshot_20170928-020420.png)
+![Place Icons]({{site.baseurl}}/Screenshot_20170928-020512.png)
+![Add Place Activity]({{site.baseurl}}/Screenshot_20170928-020516.png)
+![Invite Members]({{site.baseurl}}/Screenshot_20170928-020554.png)
+![Chat]({{site.baseurl}}/Screenshot_20170928-021914.png)
+
 ---
 
 #Description#
@@ -43,6 +56,3 @@ This program is free software: you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-
