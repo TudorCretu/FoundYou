@@ -2,8 +2,7 @@
 
 ---
 
-<img src="ScreenShots/Screenshot_20170928-011613.png" width="200" title="Lock Screen Notification"><img src="ScreenShots/Screenshot_20170928-011701.png" width="200" title="Notification"><img src="ScreenShots/Screenshot_20170928-015941.png" width="200" title="Main Activity"><img src="ScreenShots/Screenshot_20170928-020008.png" width="200" title="Navigation Drawer"><img src="ScreenShots/Screenshot_20170928-020011.png" width="200" title="Expanded List"><img src="ScreenShots/Screenshot_20170928-020228.png" width="200" title="Login Activity">
-<img src="ScreenShots/Screenshot_20170928-020329.png" width="200" title="Places List"><img src="ScreenShots/Screenshot_20170928-020420.png" width="200" title="Place picker"><img src="ScreenShots/Screenshot_20170928-020512.png" width="200" title="Place Icons"><img src="ScreenShots/Screenshot_20170928-020516.png" width="200" title="Add Place Activity"><img src="ScreenShots/Screenshot_20170928-020554.png" width="200" title="Invite Members"><img src="ScreenShots/Screenshot_20170928-021914.png" width="200" title="Chat">
+<img src="ScreenShots/Screenshot_20170928-011613.png" width="200" title="Lock Screen Notification">  <img src="ScreenShots/Screenshot_20170928-011701.png" width="200" title="Notification">  <img src="ScreenShots/Screenshot_20170928-015941.png" width="200" title="Main Activity">  <img src="ScreenShots/Screenshot_20170928-020008.png" width="200" title="Navigation Drawer">  <img src="ScreenShots/Screenshot_20170928-020011.png" width="200" title="Expanded List">  <img src="ScreenShots/Screenshot_20170928-020228.png" width="200" title="Login Activity">  <img src="ScreenShots/Screenshot_20170928-020329.png" width="200" title="Places List">  <img src="ScreenShots/Screenshot_20170928-020420.png" width="200" title="Place picker">  <img src="ScreenShots/Screenshot_20170928-020512.png" width="200" title="Place Icons">  <img src="ScreenShots/Screenshot_20170928-020516.png" width="200" title="Add Place Activity">  <img src="ScreenShots/Screenshot_20170928-020554.png" width="200" title="Invite Members">  <img src="ScreenShots/Screenshot_20170928-021914.png" width="200" title="Chat">
 
 ---
 
@@ -31,16 +30,16 @@ Alpha 0.1
 
 The app uses the following services:
 
--Firebase Database, Storage, Analytics
--Google Dev API, 
--Google Places API.
--Google Maps API.
--Facebook developer API
--Twitter developer API
+- Firebase Database, Storage, Analytics
+- Google Dev API, 
+- Google Places API.
+- Google Maps API.
+- Facebook developer API
+- Twitter developer API
 
 # Team
 
--Tudor Cretu, student at University of Cambridge, Trinity College
+- Tudor Cretu, student at University of Cambridge, Trinity College
 
 # License
 
